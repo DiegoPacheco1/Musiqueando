@@ -49,3 +49,4 @@ EXPOSE 8080
 
 # Comando de ejecución
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+
