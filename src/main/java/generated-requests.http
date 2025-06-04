@@ -1,0 +1,244 @@
+#########################################
+### 🔐 AUTH CONTROLLER
+#########################################
+
+### 1️⃣ Registro de usuario
+POST http://localhost:8080/api/auth/registro
+Content-Type: application/json
+
+{
+  "usuario": "pepito",
+  "password": "secreto"
+}
+
+> {%
+    client.global.set("lastUserId", response.body.usuario || "pepito");
+%}
+
+### 2️⃣ Login y obtención de accessToken
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "nombre": "pepito",
+  "password": "secreto"
+}
+
+> {%
+    client.global.set("accessToken", response.body.accessToken);
+    client.global.set("refreshToken", response.body.refreshToken);
+%}
+
+### 3️⃣ Refresh de accessToken
+POST http://localhost:8080/api/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+> {%
+    client.global.set("accessToken", response.body.accessToken);
+%}
+
+
+
+
+#########################################
+### 🎵 CANCIONES CONTROLLER
+#########################################
+
+### 4️⃣ Mostrar todas las canciones
+GET http://localhost:8080/api/canciones
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 5️⃣ Obtener canción por ID
+GET http://localhost:8080/api/canciones/681f244c25d39d888b81bd47
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 6️⃣ Buscar canciones por artistaId
+GET http://localhost:8080/api/canciones/artista/681f219025d39d888b81bd45
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 7️⃣ Crear una nueva canción
+POST http://localhost:8080/api/canciones
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "acordes": ["DO", "SOL", "LAm", "FA"],
+  "letra": [
+    "Primera línea de la canción",
+    "Segunda línea del estribillo"
+  ],
+  "cejilla": 2,
+  "genero": "Pop",
+  "nombre": "Nueva Canción",
+  "artistaId": "681f219025d39d888b81bd44"
+}
+
+> {%
+    client.global.set("newSongId", response.body.id);
+%}
+
+
+### 9️⃣ Eliminar la canción
+DELETE http://localhost:8080/api/canciones/{{newSongId}}
+Authorization: Bearer {{accessToken}}
+
+### 🔟 Comprobar que se eliminó
+GET http://localhost:8080/api/canciones/{{newSongId}}
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+
+
+
+
+#########################################
+### 🎤 ARTISTAS CONTROLLER
+#########################################
+
+### 🔹 Mostrar todos los artistas
+GET http://localhost:8080/api/artistas
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔹 Obtener artista por ID
+GET http://localhost:8080/api/artistas/681f219025d39d888b81bd44
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔹 Crear nuevo artista
+POST http://localhost:8080/api/artistas
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "nombre": "Nuevo Artista"
+}
+
+> {%
+    client.global.set("newArtistId", response.body.id);
+%}
+
+### 🔹 Actualizar artista
+PUT http://localhost:8080/api/artistas/{{newArtistId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "{{newArtistId}}",
+  "nombre": "Artista Actualizado"
+}
+
+### 🔹 Eliminar artista
+DELETE http://localhost:8080/api/artistas/{{newArtistId}}
+Authorization: Bearer {{accessToken}}
+
+
+
+
+
+#########################################
+### 🎙 GRABACIONES CONTROLLER
+#########################################
+
+### 🔸 Mostrar todas las grabaciones
+GET http://localhost:8080/api/grabaciones
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔸 Obtener grabación por ID
+GET http://localhost:8080/api/grabaciones/{{newRecordingId}}
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔸 Buscar grabaciones por usuarioId
+GET http://localhost:8080/api/grabaciones/usuario/pepito
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔸 Crear nueva grabación
+POST http://localhost:8080/api/grabaciones
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "usuarioId": "pepito",
+  "nombre": "Mi primera grabación",
+  "fecha": "2025-05-10T18:30:00Z",
+  "duracion": 60.0,
+  "path": "C:\\Users\\Administrador\\Desktop\\Musiqueando\\src\\main\\resources\\grabaciones"
+
+}
+
+> {%
+    client.global.set("newRecordingId", response.body.id);
+%}
+
+
+### 🔸 Eliminar grabación
+DELETE http://localhost:8080/api/grabaciones/{{newRecordingId}}
+Authorization: Bearer {{accessToken}}
+
+
+
+
+
+
+
+#########################################
+### 🎧 SONIDOS CONTROLLER
+#########################################
+
+### 🔸 Mostrar todos los sonidos
+GET http://localhost:8080/api/sonidos
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔸 Obtener sonido por ID
+GET http://localhost:8080/api/sonidos/{{newSoundId}}
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔸 Buscar sonidos por categoría
+GET http://localhost:8080/api/sonidos/categoria/Efecto
+Authorization: Bearer {{accessToken}}
+Accept: application/json
+
+### 🔸 Crear nuevo sonido
+POST http://localhost:8080/api/sonidos
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "nombre": "Campanilla",
+  "categoria": "Efecto",
+  "duracion": 3.5,
+  "path": "/media/sonidos/campanilla.mp3"
+}
+
+> {%
+    client.global.set("newSoundId", response.body.id);
+%}
+
+### 🔸 Actualizar sonido
+PUT http://localhost:8080/api/sonidos/{{newSoundId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "{{newSoundId}}",
+  "nombre": "Campanilla Editada",
+  "categoria": "Efecto",
+  "duracion": 4.0,
+  "path": "/media/sonidos/campanilla_editada.mp3"
+}
+
+### 🔸 Eliminar sonido
+DELETE http://localhost:8080/api/sonidos/{{newSoundId}}
+Authorization: Bearer {{accessToken}}
